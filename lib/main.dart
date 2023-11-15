@@ -58,27 +58,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void filterItems(String query) {
-    // Filtering items based on the query
-    setState(() {
-      _filteredItems = _items
-          .where((item) =>
-              item["name"]
-                  .toString()
-                  .toLowerCase()
-                  .contains(query.toLowerCase()) ||
-              item["gender"]
-                  .toString()
-                  .toLowerCase()
-                  .contains(query.toLowerCase()) ||
-              item["species"]
-                  .toString()
-                  .toLowerCase()
-                  .contains(query.toLowerCase()))
-          .toList();
-    });
-  }
-
   void showItemDetails(int index) {
     Navigator.push(
       context,
@@ -88,20 +67,107 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _addItemToList() {
-    // Create a new item and add it to the list
-    Map<String, dynamic> newItem = {
-      "name": "Shin Hati",
-      "gender": "Female",
-      "species": "Human",
-      "image": "https://static.wikia.nocookie.net/esstarwars/images/7/7c/ShinHati-AhsokaTeaser.jpg/revision/latest?cb=20230407204614",
-      "id": _items.length + 1 // Unique ID for the new item
-    };
+  void _addItemToList() async {
+  Map<String, dynamic>? newItem = await _showAddItemDialog();
 
+  if (newItem != null) {
+    // Process the new item
     setState(() {
       _items.add(newItem);
-      _filteredItems = List.from(_items); // Update filtered items too
+      _filteredItems = List.from(_items);
     });
+
+    // Save the updated list to SharedPreferences
+    _saveItemsToPrefs(_items);
+  } else {
+    // Handle cancellation (optional)
+    print("Add item operation canceled");
+  }
+}
+
+  Future<Map<String, dynamic>?> _showAddItemDialog() async {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController genderController = TextEditingController();
+  TextEditingController speciesController = TextEditingController();
+  TextEditingController imageController = TextEditingController();
+
+  return await showDialog<Map<String, dynamic>>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("Add New Character"),
+        backgroundColor: Colors.black,
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: nameController,
+              style: TextStyle(color: Color.fromRGBO(191, 150, 2, 1)),
+              decoration: InputDecoration(
+                labelText: "Name",
+                labelStyle: TextStyle(color: Color.fromRGBO(191, 150, 2, 1)),
+              ),
+            ),
+            TextField(
+              controller: genderController,
+              style: TextStyle(color: Color.fromRGBO(191, 150, 2, 1)),
+              decoration: InputDecoration(
+                labelText: "Gender",
+                labelStyle: TextStyle(color: Color.fromRGBO(191, 150, 2, 1)),
+              ),
+            ),
+            TextField(
+              controller: speciesController,
+              style: TextStyle(color: Color.fromRGBO(191, 150, 2, 1)),
+              decoration: InputDecoration(
+                labelText: "Species",
+                labelStyle: TextStyle(color: Color.fromRGBO(191, 150, 2, 1)),
+              ),
+            ),
+            TextField(
+              controller: imageController,
+              style: TextStyle(color: Color.fromRGBO(191, 150, 2, 1)),
+              decoration: InputDecoration(
+                labelText: "Image URL",
+                labelStyle: TextStyle(color: Color.fromRGBO(191, 150, 2, 1)),
+              ),
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop({
+                "name": nameController.text,
+                "gender": genderController.text,
+                "species": speciesController.text,
+                "image": imageController.text,
+                "id": _items.length + 1,
+              });
+            },
+            style: ElevatedButton.styleFrom(
+              primary: Color.fromRGBO(191, 150, 2, 1),
+            ),
+            child: Text("Add"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(null); // Return null on cancel
+            },
+            style: TextButton.styleFrom(
+              primary: Color.fromRGBO(191, 150, 2, 1),
+            ),
+            child: Text("Cancel"),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+  Future<void> _saveItemsToPrefs(List items) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('items', json.encode({"items": items}));
   }
 
   void filterSearchResults(String query) {
