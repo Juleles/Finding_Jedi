@@ -50,11 +50,11 @@ class _HomePageState extends State<HomePage> {
     final String response = await rootBundle.loadString('assets/sample.json');
     final data = await json.decode(response);
     setState(() {
-     _items = data["items"].map((item) {
-    item['rating'] = 0.0; // Initially setting the rating to 0
-    return item;
-  }).toList();
-  _filteredItems = List.from(_items); // Update filtered items too
+      _items = data["items"].map((item) {
+        item['rating'] = 0.0; // Initially setting the rating to 0
+        return item;
+      }).toList();
+      _filteredItems = List.from(_items); // Update filtered items too
     });
   }
 
@@ -88,6 +88,22 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _addItemToList() {
+    // Create a new item and add it to the list
+    Map<String, dynamic> newItem = {
+      "name": "Shin Hati",
+      "gender": "Female",
+      "species": "Human",
+      "image": "https://static.wikia.nocookie.net/esstarwars/images/7/7c/ShinHati-AhsokaTeaser.jpg/revision/latest?cb=20230407204614",
+      "id": _items.length + 1 // Unique ID for the new item
+    };
+
+    setState(() {
+      _items.add(newItem);
+      _filteredItems = List.from(_items); // Update filtered items too
+    });
+  }
+
   void filterSearchResults(String query) {
     List dummySearchList = [];
     dummySearchList.addAll(_items);
@@ -115,7 +131,30 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         centerTitle: true,
-        title: const Text("FINDING JEDI", style: TextStyle(color: Color.fromRGBO(191, 150, 2, 1), fontWeight: FontWeight.bold),),
+        title: const Text(
+          "FINDING JEDI",
+          style: TextStyle(
+              color: Color.fromRGBO(191, 150, 2, 1),
+              fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color.fromRGBO(191, 150, 2, 1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(60.0),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 20),
+            ),
+            onPressed: () {
+              _addItemToList();
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Icon(Icons.add_sharp, color: Colors.black),
+            ),
+          ),
+        ],
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -131,16 +170,19 @@ class _HomePageState extends State<HomePage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
-                  style: TextStyle(color: Color.fromRGBO(191, 150, 2, 1), fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Color.fromRGBO(191, 150, 2, 1),
+                      fontWeight: FontWeight.bold),
                   controller: _searchController,
                   onChanged: (value) {
                     filterSearchResults(value);
                   },
                   decoration: const InputDecoration(
-                    //labelText: 'Search your character here',
-                    hintText: 'Search your Jedi here',
-                    hintStyle: TextStyle(color: Color.fromRGBO(191, 150, 2, 1), fontWeight: FontWeight.bold)
-                  ),
+                      //labelText: 'Search your character here',
+                      hintText: 'Search your Jedi here',
+                      hintStyle: TextStyle(
+                          color: Color.fromRGBO(191, 150, 2, 1),
+                          fontWeight: FontWeight.bold)),
                 ),
               ),
               _filteredItems.isNotEmpty
@@ -167,7 +209,6 @@ class _HomePageState extends State<HomePage> {
                                     Text(_filteredItems[index]["name"]),
                                     Text(_filteredItems[index]["gender"]),
                                     Text(_filteredItems[index]["species"]),
-                                    
                                   ],
                                 ),
                               ),
@@ -241,9 +282,21 @@ class _ItemDetailsState extends State<ItemDetails> {
                   radius: 50,
                 ),
                 const SizedBox(height: 20),
-                Text("Name: ${widget.item["name"]}".toUpperCase(), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
-                Text("Gender: ${widget.item["gender"]}".toUpperCase(), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
-                Text("Species: ${widget.item["species"]}".toUpperCase(), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                Text("Name: ${widget.item["name"]}".toUpperCase(),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)),
+                Text("Gender: ${widget.item["gender"]}".toUpperCase(),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)),
+                Text("Species: ${widget.item["species"]}".toUpperCase(),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)),
                 const SizedBox(height: 10),
                 RatingBar.builder(
                   initialRating: _currentRating,
@@ -261,7 +314,11 @@ class _ItemDetailsState extends State<ItemDetails> {
                     _saveRating(rating);
                   },
                 ),
-                Text('Rating: $_currentRating', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                Text('Rating: $_currentRating',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)),
               ],
             ),
           ),
@@ -270,7 +327,6 @@ class _ItemDetailsState extends State<ItemDetails> {
     );
   }
 }
-
 
 class AnimatedBackground extends StatefulWidget {
   const AnimatedBackground({Key? key}) : super(key: key);
@@ -292,34 +348,34 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
     )..repeat();
   }
 
-@override
-Widget build(BuildContext context) {
-  return Stack(
-    children: [
-      // Background Color
-      Container(
-        color: Colors.black, // Set your desired background color
-        width: double.infinity,
-        height: double.infinity,
-      ),
-      // Centered AnimatedBuilder
-      Center(
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return Transform.rotate(
-              angle: _controller.value * 2 * 3.1415, // Rotates the background
-              child: Transform.scale(
-                scale: 0.5, // Change this value to resize the image
-                child: Image.asset('assets/blackhole.png'),
-              ),
-            );
-          },
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // Background Color
+        Container(
+          color: Colors.black, // Set your desired background color
+          width: double.infinity,
+          height: double.infinity,
         ),
-      ),
-    ],
-  );
-}
+        // Centered AnimatedBuilder
+        Center(
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              return Transform.rotate(
+                angle: _controller.value * 2 * 3.1415, // Rotates the background
+                child: Transform.scale(
+                  scale: 0.5, // Change this value to resize the image
+                  child: Image.asset('assets/blackhole.png'),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   void dispose() {
