@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:path_provider/path_provider.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
   List _items = [];
   List _filteredItems = [];
 
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -83,7 +83,6 @@ class _HomePageState extends State<HomePage> {
       _saveItemsToLocalJson(_items);
     } else {
       // Handle cancellation (optional)
-      print("Add item operation canceled");
     }
   }
 
@@ -149,7 +148,7 @@ class _HomePageState extends State<HomePage> {
                 });
               },
               style: ElevatedButton.styleFrom(
-                primary: Color.fromRGBO(191, 150, 2, 1),
+                backgroundColor: Color.fromRGBO(191, 150, 2, 1),
               ),
               child: Text("Add"),
             ),
@@ -158,7 +157,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.of(context).pop(null); // Return null on cancel
               },
               style: TextButton.styleFrom(
-                primary: Color.fromRGBO(191, 150, 2, 1),
+                backgroundColor: Color.fromRGBO(191, 150, 2, 1),
               ),
               child: Text("Cancel"),
             ),
@@ -169,14 +168,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _saveItemsToLocalJson(List items) async {
-  final directory = await getApplicationDocumentsDirectory();
+  
   final file = File('assets/sample.json');
 
   try {
     await file.writeAsString(json.encode({"items": items}));
-    print('Items saved to local JSON file');
   } catch (e) {
-    print('Error saving items: $e');
     // Handle error, if any
   }
 }
@@ -186,11 +183,11 @@ class _HomePageState extends State<HomePage> {
     dummySearchList.addAll(_items);
     if (query.isNotEmpty) {
       List dummyListData = [];
-      dummySearchList.forEach((item) {
+      for (var item in dummySearchList) {
         if (item['name'].toLowerCase().contains(query.toLowerCase())) {
           dummyListData.add(item);
         }
-      });
+      }
       setState(() {
         _filteredItems = dummyListData;
       });
@@ -294,9 +291,7 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                     )
-                  : Container(
-                      child: Text("No results"),
-                    ),
+                  : Text("No results"),
             ],
           ),
         ),
