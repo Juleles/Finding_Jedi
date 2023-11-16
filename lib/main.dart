@@ -7,7 +7,6 @@ import 'dart:io';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 void main() {
   runApp(const MyApp());
 }
@@ -168,15 +167,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _saveItemsToLocalJson(List items) async {
-  
-  final file = File('assets/sample.json');
+    final file = File('assets/sample.json');
 
-  try {
-    await file.writeAsString(json.encode({"items": items}));
-  } catch (e) {
-    // Handle error, if any
+    try {
+      await file.writeAsString(json.encode({"items": items}));
+    } catch (e) {
+      // Handle error, if any
+    }
   }
-}
 
   void filterSearchResults(String query) {
     List dummySearchList = [];
